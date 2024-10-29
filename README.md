@@ -1,4 +1,4 @@
-# Grounded-CD: Grounded SAM-based Building Change Detection
+# Grounded-CD: Grounded Building Change Detection
 
 Grounded-CD leverages **Grounding DINO** and **Segment Anything Model (SAM)** for effective building change detection from satellite images.
 

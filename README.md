@@ -27,7 +27,7 @@ grounded-cd/
 ├── satelliteImageProcess.py  # Execution file 1
 ├── Grounded-CD.py            # Execution file 2
 └── output_merger.py          # Execution file 3
-
+```
 
 ## Setup and Execution Steps
 
@@ -45,7 +45,8 @@ pip install altgraph==0.17.4 geojson==3.1.0 natsort==8.4.0 \
 ```
 
 #### Grounded-CD Environment
-Create another environment for Grounded-CD:
+Create another environment for Grounded-CD:  
+
 
 ```bash
 conda create -n grounded-cd python=3.8

@@ -7,7 +7,7 @@ res_sam: 1024
 threshold_cos_sim: 0.5
 
 # grounding-dino setting
-grounding_dino_config: /home/wpals113/mmdetection/configs/grounding_dino/grounding_dino_swin-l_pretrain_all.py
+grounding_dino_config: "/home/wpals113/mmdetection/configs/mm_grounding_dino/grounding_dino_swin-l_pretrain_all.py"
 grounding_dino_checkpoint: ./checkpoints/grounding_dino_swin-l_pretrain_all-56d69e78.pth
 grounding_dino_texts: "building."
 grounding_dino_pred_score_thr: 0.1

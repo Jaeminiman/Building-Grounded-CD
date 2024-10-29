@@ -157,7 +157,7 @@ python output_merger.py
     <p>Prediction</p>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="[https://github.com/user-attachments/assets/e139332a-4f05-4343-bab0-57e752964c0d](https://github.com/user-attachments/assets/d92c01e7-de44-4873-9240-01fcd5890e75)" alt="Ground Truth Result" width="30%">
+    <img src="https://github.com/user-attachments/assets/e139332a-4f05-4343-bab0-57e752964c0d" alt="Ground Truth Result" width="30%">
     <p>Ground Truth</p>
   </div>
 </div>

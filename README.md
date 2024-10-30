@@ -33,6 +33,9 @@ grounded-cd/
   # Check point 다운 커맨드를 실행하여 다운로드하고 check point에 넣어주세요.
   wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
   wget https://download.openmmlab.com/mmdetection/v3.0/mm_grounding_dino/grounding_dino_swin-l_pretrain_all/grounding_dino_swin-l_pretrain_all-56d69e78.pth
+
+  # CD-config.yaml에서 경로를 수정해주세요.
+  grounding_dino_config: "~/mmdetection/configs/mm_grounding_dino/grounding_dino_swin-l_pretrain_all.py" # git clone을 수행한 mmdetection의 소스코드 파일 경로로 설정
 ```
 ## Setup and Execution Steps
 

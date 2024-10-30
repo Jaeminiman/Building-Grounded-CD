@@ -83,7 +83,9 @@ conda activate grounded-cd
    python3
    > import nltk
    > nltk.download('punkt', download_dir='~/nltk_data')
+   > nltk.download('punkt_tab')
    > nltk.download('averaged_perceptron_tagger', download_dir='~/nltk_data')
+   > nltk.download('averaged_perceptron_tagger_eng')
    ```
 
 3. **Install SAM**

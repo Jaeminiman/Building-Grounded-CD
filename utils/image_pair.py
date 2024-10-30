@@ -151,21 +151,3 @@ class ImagePair:
 
         return corrected_image1, corrected_image2, homography_12
 
-
-# Example usage
-if __name__ == "__main__":
-    try:
-        # Create an instance of the ImagePair class
-        image_pair = ImagePair("path/to/image1.jpg", "path/to/image2.jpg")
-
-        # Get the image pair
-        img1, img2 = image_pair.get_image_pair()
-        print("Image 1 shape:", img1.shape)
-        print("Image 2 shape:", img2.shape)
-
-        # Save the images
-        image_pair.save_images("output_directory")
-    except FileNotFoundError as e:
-        print(e)
-    except ValueError as e:
-        print(e)

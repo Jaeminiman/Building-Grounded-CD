@@ -8,10 +8,10 @@ from utils.CD_utils import load_config
 
 def crop_image(image, crop_size, stride):
     """
-    이미지에서 일정한 크기로 슬라이딩 윈도우를 사용해 crop합니다.
-    image: 입력 이미지 (numpy 배열)
-    crop_size: 잘라낼 이미지 크기 (가로, 세로)
-    stride: 슬라이딩 윈도우의 보폭 (겹쳐지는 정도 조절)
+    Crop the image using a sliding window with a fixed size.
+    image: input image (numpy array)
+    crop_size: size of the crop (width, height)
+    stride: step size for the sliding window (controls overlap)
     """
     crops = []
     h, w, _ = image.shape
@@ -35,7 +35,9 @@ def crop_image(image, crop_size, stride):
             break
 
     return crops
-# 상위 및 하위 2% 클리핑
+
+# Clip the top and bottom 2% and normalize
+
 def clip_and_normalize(band):
     lower_limit, upper_limit = np.percentile(band, 2), np.percentile(band, 98)
     band = np.clip(band, lower_limit, upper_limit)
@@ -43,12 +45,12 @@ def clip_and_normalize(band):
     return normalized_band
 
 def process_satellite_image(input_tif_path, output_dir, crop_size=(512, 512), stride=256):
-    # TIF 파일 열기
+    # Open TIF file
     dataset = gdal.Open(input_tif_path)
     if dataset is None:
-        raise FileNotFoundError(f"파일을 열 수 없습니다: {input_tif_path}")
+        raise FileNotFoundError(f"Unable to open file: {input_tif_path}")
     
-    # RGB 밴드 읽기 (Band 1: Blue, Band 2: Green, Band 3: Red)
+    # Read RGB bands (Band 1: Blue, Band 2: Green, Band 3: Red)
     band1 = dataset.GetRasterBand(1).ReadAsArray()  # Blue
     band2 = dataset.GetRasterBand(2).ReadAsArray()  # Green
     band3 = dataset.GetRasterBand(3).ReadAsArray()  # Red
@@ -56,27 +58,23 @@ def process_satellite_image(input_tif_path, output_dir, crop_size=(512, 512), st
     bands = [band1, band2, band3]
     band_names = ["Blue", "Green", "Red"]
 
-    # 16비트 이미지를 8비트로 정규화
+    # Normalize 16-bit images to 8-bit
     blue_8bit = clip_and_normalize(band1)
     green_8bit = clip_and_normalize(band2)
     red_8bit = clip_and_normalize(band3)
 
-
-    # RGB 이미지 결합
+    # Merge RGB image
     image_rgb = cv2.merge((blue_8bit, green_8bit, red_8bit))
     
-
-    # 이미지 crop
+    # Crop the image
     crops = crop_image(image_rgb, crop_size, stride)
     
-    
-    
-    # 잘라낸 이미지 저장
+    # Save cropped images
     for idx, crop in enumerate(crops):
         output_path = os.path.join(output_dir, f"crop_{idx}.jpg")
         cv2.imwrite(output_path, crop)
     
-    print(f"총 {len(crops)}개의 이미지가 저장되었습니다.")
+    print(f"A total of {len(crops)} images have been saved.")
 
 if __name__ == "__main__":
     # Load configuration
@@ -97,11 +95,11 @@ if __name__ == "__main__":
                         
         initial_output_dir = os.path.join(output_dir_base, f"data_x{basic_res*time}", "initial_images")
         os.makedirs(initial_output_dir, exist_ok=True)
-        # Process image
+        # Process initial image
         process_satellite_image(initial_tif_path, initial_output_dir, crop_size, stride)
 
         new_output_dir = os.path.join(output_dir_base, f"data_x{basic_res*time}", "new_images")
         os.makedirs(new_output_dir, exist_ok=True)
 
-        # Process image
+        # Process new image
         process_satellite_image(new_tif_path, new_output_dir, crop_size, stride)

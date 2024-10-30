@@ -30,10 +30,10 @@ def save_as_geotiff(image_array, output_path, original_shape, geotransform, proj
 
 def merge_crops_to_image(crops, merged_image, weight_mask, crop_size, stride):
     """
-    잘라낸 이미지를 원본 크기의 하나의 이미지로 합칩니다.
-    crops: 잘라낸 이미지 배열 (리스트 형태)
-    crop_size: crop된 이미지의 크기 (가로, 세로)
-    stride: 슬라이딩 윈도우 보폭
+    Merges cropped images back into a single original-size image.
+    crops: Cropped image array (as a list).
+    crop_size: Size of the cropped images (width, height).
+    stride: Sliding window step.
     """
     h, w = merged_image.shape
     crop_h, crop_w = crop_size    
@@ -47,7 +47,7 @@ def merge_crops_to_image(crops, merged_image, weight_mask, crop_size, stride):
             if x + crop_w > w:
                 x = w - crop_w
 
-            # crop된 이미지를 합치면서 중첩된 영역은 평균 처리
+            # Merge the cropped images and average overlapping areas
             merged_image[y:y + crop_h, x:x + crop_w] += crops[crop_idx] 
             weight_mask[y:y + crop_h, x:x + crop_w] += 1
             crop_idx += 1    
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     os.makedirs(result_dir, exist_ok=True)
 
     merged_image = np.zeros(original_shape, dtype=np.uint8)
-    weight_mask = np.zeros(original_shape, dtype=np.uint8) # 중첩 부분에 대한 가중치를 저장할 마스크
+    weight_mask = np.zeros(original_shape, dtype=np.uint8) # Mask to store weights for overlapping areas
 
     for time in times:        
         data_scale = f"data_x{basic_res*time}"        
@@ -98,23 +98,22 @@ if __name__ == "__main__":
         crops = np.where(crops > 127, 1, 0).astype(np.uint8)
 
    
-        # crop을 병합하여 원본 이미지 복원
+        # Merge crops to restore the original image
         merged_image, weight_mask = merge_crops_to_image(crops, merged_image, weight_mask, crop_size, stride)
     
     
 
-    # 중첩된 부분을 평균화
-    merged_image = merged_image.astype(np.float32) / np.maximum(weight_mask, 1)  # weight_mask가 0인 부분은 1로 나눔
-    
+    # Average overlapping areas
+    merged_image = merged_image.astype(np.float32) / np.maximum(weight_mask, 1)  # Divide by weight_mask, using 1 where it's 0
     
     # jpg
-    # 0.15 이상인 부분은 255, 나머지는 0으로 설정    
+    # Set values greater than pred_thr to 255, and the rest to 0    
     result_image = np.where(merged_image > pred_thr, 255, 0).astype(np.uint8)
     result_image_path = os.path.join(result_dir, 'merged_image.jpg')
     cv2.imwrite(result_image_path, result_image)
 
     # tiff
-    # 0.15 이상인 부분은 255, 나머지는 0으로 설정    
+    # Set values greater than pred_thr to 255, and the rest to 0    
     binary_image = np.where(merged_image > pred_thr, 1, 0).astype(np.uint8)
     result_geotiff_path = os.path.join(result_dir, 'merged_image.tif')    
     geotransform = (0, 1, 0, 0, 0, -1)  # Example geotransform (top left x, pixel width, rotation, top left y, rotation, pixel height)

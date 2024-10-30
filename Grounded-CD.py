@@ -220,9 +220,8 @@ class Grounded_CD:
                 txt_line = f'{class_id} {conf:.4f} {x_center:.4f} {y_center:.4f} {width:.4f} {height:.4f}\n'
                 label_file.write(txt_line)
 
-                # 바운딩 박스 그리기
+                # Visualization of bboxes
                 cv2.rectangle(image_canvas, (x1, y1), (x2, y2), color, 1)
-                # 라벨 그리기
                 cv2.putText(image_canvas, f"building ({scores[i]:2f})", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
         cv2.imwrite(save_image_path, image_canvas)

@@ -47,9 +47,9 @@ Create a GDAL environment and install dependencies:
 ```bash
 conda create -n gdal_env python=3.13
 conda activate gdal_env
-pip install altgraph==0.17.4 geojson==3.1.0 natsort==8.4.0 \
-    opencv-python==4.10.0.84 osmnx==1.9.3 \
-    pyyaml==6.0.2 tqdm==4.66.5
+pip install geopandas
+conda install -c conda-forge gdal
+pip install opencv-python
 ```
 
 #### Grounded-CD Environment

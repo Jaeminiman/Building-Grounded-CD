@@ -143,7 +143,7 @@ python Grounded-CD.py
   - `./config/satellite-config.yaml`
 - **Notes**: 
   - Use a separate conda environment to avoid GDAL version conflicts.
-  - Please check if you corrected the path of grounding_dino_config in ./config/CD-config.yaml
+  - Please check if you corrected the path of `grounding_dino_config` in `./config/CD-config.yaml`
 
 ### 4. Merge Results and Convert to TIF
 

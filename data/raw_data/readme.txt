@@ -1,0 +1,1 @@
+tif images should be located here.

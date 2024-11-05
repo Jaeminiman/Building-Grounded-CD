@@ -156,8 +156,11 @@ class Grounded_CD:
         texts = self.gd_texts            
         pred_score_thr = self.gd_pred_thr
         iou_threshold = self.gd_iou_thr
-        save_dir = self.gd_save_dir
-        save_image_path = os.path.join(save_dir, phase, os.path.basename(image_path))
+        save_dir = os.path.join(self.gd_save_dir, phase)
+        os.makedirs(save_dir, exist_ok=True)
+
+        save_image_path = os.path.join(save_dir, os.path.basename(image_path))
+
 
         # Use the detector to do inference
                 
@@ -235,14 +238,16 @@ class Grounded_CD:
         """Function to process an image pair."""
         # Get image pair
         image_pair = ImagePair(image1_path, image2_path)
-        image1_rectified, image2_rectified, homography_12 = image_pair.rectify()
+        # image1_rectified, image2_rectified, homography_12 = image_pair.rectify()
+        image1 = image_pair.image1
+        image2 = image_pair.image2
 
-        initial_gd_output = self._grounding_dino(image1_rectified, image1_path, "initial")
-        new_gd_output = self._grounding_dino(image2_rectified, image2_path, "new")
+        initial_gd_output = self._grounding_dino(image1, image1_path, "initial")
+        new_gd_output = self._grounding_dino(image2, image2_path, "new")
 
         # Resize images for embedding
-        image1_sam = cv2.resize(image1_rectified, (self.res_sam, self.res_sam)) 
-        image2_sam = cv2.resize(image2_rectified, (self.res_sam, self.res_sam))
+        image1_sam = cv2.resize(image1, (self.res_sam, self.res_sam)) 
+        image2_sam = cv2.resize(image2, (self.res_sam, self.res_sam))
 
         # Set images to predictors to generate embeddings
         self.predictor1.set_image(image1_sam)
@@ -251,7 +256,7 @@ class Grounded_CD:
         embed1 = self.predictor1.features.squeeze().cpu().numpy()
         embed2 = self.predictor2.features.squeeze().cpu().numpy()
 
-        height, width, _ = image1_rectified.shape
+        height, width, _ = image1.shape
         
         debut_boxes = self._extract_boxes(new_gd_output, width, height)
         retirement_boxes = self._extract_boxes(initial_gd_output, width, height)
@@ -273,9 +278,9 @@ class Grounded_CD:
         for mask_image in retirement_mask_images:
             retirement_change_mask = np.bitwise_or(retirement_change_mask, mask_image)
             
-        retirement_change_mask_warped = cv2.warpPerspective(retirement_change_mask, homography_12, (width, height), borderMode=cv2.BORDER_CONSTANT, borderValue=0) 
+        # retirement_change_mask_warped = cv2.warpPerspective(retirement_change_mask, homography_12, (width, height), borderMode=cv2.BORDER_CONSTANT, borderValue=0) 
 
-        change_mask = np.bitwise_or(debut_change_mask, retirement_change_mask_warped)
+        change_mask = np.bitwise_or(debut_change_mask, retirement_change_mask)
         
         # Save masks for visualization
         change_mask = np.where(change_mask >= 1, 255, 0).astype(np.uint8)        
